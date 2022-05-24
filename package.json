@@ -1,0 +1,51 @@
+{
+  "name": "ptx",
+  "version": "0.0.0-development",
+  "description": "PowerTune execution script",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digio/powertune-executor.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "tuning"
+  ],
+  "author": "Brett Uglow",
+  "license": "Apache-2.0",
+  "exports": "./src/ptx.js",
+  "bin": {
+    "ptx": "src/ptx.js"
+  },
+  "bugs": {
+    "url": "https://github.com/digio/powertune-executor/issues"
+  },
+  "homepage": "https://github.com/digio/powertune-executor#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix src/**/*.js",
+    "verify": "eslint --max-warnings=0  src/**/*.js *.js",
+    "semantic-release": "semantic-release"
+  },
+  "dependencies": {
+    "aws-sdk": "2.1133.0",
+    "p-pipe": "4.0.0",
+    "ora": "6.1.0"
+  },
+  "devDependencies": {
+    "eslint": "8.15.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "prettier": "2.6.2",
+    "semantic-release": "19.0.2"
+  },
+  "files": [
+    "examples",
+    "src",
+    "*.md"
+  ],
+  "engines": {
+    "node": ">=14.13.1 || >16"
+  }
+}
