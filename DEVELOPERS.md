@@ -29,7 +29,6 @@ following products on your development machine:
 The project is organised into the following folder structure:
 
 - `/` - Project-level configuration (linting rules, CI, docs, license)
-- `public/` - Files that are deployed to GitHub pages (web-content). The generated JS & CSS files are copied here.
 - `src/` - The source code and test specifications
 
 ## Installing
@@ -37,19 +36,6 @@ The project is organised into the following folder structure:
 ```shell
 # Install the dependencies & devDependencies
 npm install
-```
-
-## Running Tests
-
-```shell
-# Run unit tests
-npm test
-
-# Run unit tests in watch mode
-npm run test:watch
-
-# Run tests and see the coverage report
-npm run test:reportlist
 ```
 
 ## Formatting your source code
