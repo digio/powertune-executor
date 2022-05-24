@@ -75,9 +75,7 @@ function showHelp() {
   console.log('  tuneConfigFile    Path to the tune config file, relative to the script');
   console.log('\nExample: npx ptx scripts/publishPlanStream.json');
   console.log('Note:    The PTX_STACK_NAME environment variable must be set to the name of the PowerTune stack');
-  console.log(
-    'Reference: https://github.com/alexcasalboni/aws-lambda-power-tuning/blob/master/README-INPUT-OUTPUT.md',
-  );
+  console.log('Reference: https://github.com/alexcasalboni/aws-lambda-power-tuning/blob/master/README-INPUT-OUTPUT.md');
   console.log('');
 }
 
