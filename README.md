@@ -53,6 +53,16 @@ See [configuration information](https://github.com/alexcasalboni/aws-lambda-powe
 - Reference multiple external JSON or JS files when defining the payload (see [examples/configs/multiInclude.json](examples/configs/multiInclude.json))
 - Pass arguments to included JS files (see [examples/configs/includeFunctionWithArgs.json](examples/configs/includeFunctionWithArgs.json))
 
+## AWS Permissions Required
+
+This tool uses the `aws-sdk` library to call the following APIs:
+
+- CloudFormation.describeStacks()
+- StepFunctions.startExecution()
+- StepFunctions.describeExecution()
+
+If you see an AWS permissions error when running `ptx`, check if your AWS account has permission to use these APIs.
+
 ## License
 
 This software is licensed under the APACHE 2.0 License. See the LICENSE file for more info.
