@@ -35,16 +35,16 @@ $ npx ptx
 
 ``` shell
 # Set your AWS Profile
-$ export AWS_PROFILE=my-profile
+export AWS_PROFILE=my-profile
 
 # This might be required too
 export AWS_SDK_LOAD_CONFIG=true
 
 # Set an env-var that points to the name of the Power Tune Stack in your AWS Account
-$ export PTX_STACK_NAME=serverlessrepo-aws-lambda-power-tuning
+export PTX_STACK_NAME=serverlessrepo-aws-lambda-power-tuning
 
 # The config-file argument is relative to the current directory
-$ npx ptx path/to/powertuneConfig.json
+npx ptx path/to/powertuneConfig.json
 
 ```
 
