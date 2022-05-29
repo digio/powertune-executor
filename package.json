@@ -16,14 +16,15 @@
   "license": "Apache-2.0",
   "exports": "./src/ptx.js",
   "bin": {
-    "ptx": "src/ptx.js"
+    "ptx": "bin/cli.js"
   },
   "bugs": {
     "url": "https://github.com/digio/powertune-executor/issues"
   },
   "homepage": "https://github.com/digio/powertune-executor#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "test:report": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
     "lint": "eslint --fix src/**/*.js",
     "verify": "eslint --max-warnings=0  src/**/*.js",
     "semantic-release": "semantic-release"
@@ -37,10 +38,12 @@
     "eslint": "8.15.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.0.0",
+    "jest": "28.1.0",
     "prettier": "2.6.2",
     "semantic-release": "19.0.2"
   },
   "files": [
+    "bin",
     "examples",
     "src",
     "*.md"

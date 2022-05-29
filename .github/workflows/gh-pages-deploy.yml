@@ -22,6 +22,8 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run verify
+     - name: Test
+       run: npm run test:report
 
   release:
     # Only release on push to master

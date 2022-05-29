@@ -36,7 +36,7 @@ const context = {
   output: '',
 };
 
-(async function main() {
+export async function main() {
   if (process.argv.length < MIN_ARGS) {
     return showHelp();
   }
@@ -65,7 +65,7 @@ const context = {
   console.log('✨  PowerTune complete!');
   // eslint-disable-next-line no-process-exit
   process.exit(0);
-})();
+}
 
 function showHelp() {
   console.log('PowerTune');
@@ -95,52 +95,72 @@ async function getStateMachineArnFromStack(context) {
   return promise;
 }
 
-function processTuneConfig(context) {
+export async function processTuneConfig(context) {
   const configFilePath = path.resolve(process.cwd(), context.configFile);
   const configFileDir = path.dirname(configFilePath);
   const config = require(configFilePath);
 
-  // Check if config.payload is an object or an array. This supports single or multi-payload tuning configs
+  // Check if config.payload is an object or an array.
+  // This supports single or multi-payload tuning configs.
   const payloadIsArray = Array.isArray(config.payload);
 
   if (payloadIsArray) {
-    config.payload.forEach((payload) => {
-      Object.entries(payload.payload)
-        .filter(([key]) => key.indexOf('$$include') === 0)
-        .forEach(([key, pathValue]) => {
-          const includeData = require(path.resolve(configFileDir, pathValue));
-
-          if (typeof includeData === 'function') {
-            // Look for the corresponding $$args<n> key
-            const keyNum = key.match(/\d+/);
-            const args = payload.payload['$$args' + keyNum];
-
-            payload.payload = { ...payload.payload, ...includeData(...args) };
-
-            // Delete the $$args<n>... key
-            delete payload.payload['$$args' + keyNum];
-          } else {
-            // Assume includeData is an object
-            payload.payload = { ...payload.payload, ...includeData };
-          }
-
-          // Delete the $$include... key
-          delete payload.payload[key];
-        });
-    });
+    config.payload.forEach((payloadItem) => findIncludeKeys(payloadItem, configFileDir));
   } else {
-    Object.entries(config.payload)
-      .filter(([key]) => key.indexOf('$$include') === 0)
-      .map(([key, pathValue]) => {
-        // Include the content
-        config.payload = { ...config.payload, ...require(path.resolve(configFileDir, pathValue)) };
-
-        // Delete the $$include... key
-        delete config.payload[key];
-      });
+    await findIncludeKeys(config, configFileDir);
   }
 
   return { ...context, tuneConfig: config };
+}
+
+async function findIncludeKeys(payload, configFileDir) {
+  return await Promise.all(
+    Object.entries(payload.payload)
+      .filter(([key]) => key.indexOf('$$include') === 0)
+      .map(async ([key, pathValue]) => await includeContent(payload, configFileDir, key, pathValue)),
+  );
+}
+
+/**
+ * This function does the file inclusion based on the type of data that is being loaded.
+ * It supports CommonJS, JSON and ESM files.
+ * @param payload
+ * @param configFileDir
+ * @param key
+ * @param pathValue
+ */
+async function includeContent(payload, configFileDir, key, pathValue) {
+  let includeData = undefined;
+  try {
+    // Assume the content is JSON or a CJS file
+    includeData = require(path.resolve(configFileDir, pathValue));
+  } catch (err) {
+    // Ignore for now.
+  }
+
+  // This will throw an error if it is not an ESM file
+  if (includeData === undefined) {
+    // This may mean we are dealing with an ESM file. Let's try an import
+    const module = await import(path.resolve(configFileDir, pathValue));
+    includeData = module.default;
+  }
+
+  if (typeof includeData === 'function') {
+    // Look for the corresponding $$args<n> key
+    const keyNum = key.match(/\d+/);
+    const args = payload.payload['$$args' + keyNum];
+
+    payload.payload = { ...payload.payload, ...includeData(...args) };
+
+    // Delete the $$args<n>... key
+    delete payload.payload['$$args' + keyNum];
+  } else {
+    // Assume includeData is an object
+    payload.payload = { ...payload.payload, ...includeData };
+  }
+
+  // Delete the $$include... key
+  delete payload.payload[key];
 }
 
 async function tune(context) {
