@@ -14,12 +14,12 @@ import StepFunctionClient from 'aws-sdk/clients/stepfunctions.js';
 import path from 'path';
 import pipe from 'p-pipe';
 import { oraPromise } from 'ora';
-
 // A way to get the old require() behaviour in ES modules
 // https://www.stefanjudis.com/snippets/how-to-import-json-files-in-es-modules-node-js/#option-2%3A-leverage-the-commonjs-%60require%60-function-to-load-json-files
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 const POWER_TUNE_STACK_NAME = process.env.PTX_STACK_NAME;
 const MIN_ARGS = 3;
@@ -68,14 +68,18 @@ export async function main() {
 }
 
 function showHelp() {
-  console.log('PowerTune');
+  console.log(`PowerTune v${version}`);
   console.log('Usage:');
   console.log('  npx ptx <tuneConfigFile>');
   console.log('\nwhere:');
   console.log('  tuneConfigFile    Path to the tune config file, relative to the script');
   console.log('\nExample: npx ptx scripts/publishPlanStream.json');
-  console.log('Note:    The PTX_STACK_NAME environment variable must be set to the name of the PowerTune stack');
-  console.log('Reference: https://github.com/alexcasalboni/aws-lambda-power-tuning/blob/master/README-INPUT-OUTPUT.md');
+  console.log(
+    'Note:    The PTX_STACK_NAME environment variable must be set to the name of the PowerTune stack',
+  );
+  console.log(
+    'Reference: https://github.com/alexcasalboni/aws-lambda-power-tuning/blob/master/README-INPUT-OUTPUT.md',
+  );
   console.log('');
 }
 
@@ -88,7 +92,10 @@ async function getStateMachineArnFromStack(context) {
   const promise = cf
     .describeStacks(params)
     .promise()
-    .then((result) => result.Stacks[0].Outputs.filter((o) => o.OutputKey === 'StateMachineARN')[0].OutputValue)
+    .then(
+      (result) =>
+        result.Stacks[0].Outputs.filter((o) => o.OutputKey === 'StateMachineARN')[0].OutputValue,
+    )
     .then((stateMachineArn) => ({ ...context, stateMachineArn }));
 
   oraPromise(promise, { text: 'Getting a reference to the PowerTune step function' });
@@ -117,7 +124,9 @@ async function findIncludeKeys(payload, configFileDir) {
   return await Promise.all(
     Object.entries(payload.payload)
       .filter(([key]) => key.indexOf('$$include') === 0)
-      .map(async ([key, pathValue]) => await includeContent(payload, configFileDir, key, pathValue)),
+      .map(
+        async ([key, pathValue]) => await includeContent(payload, configFileDir, key, pathValue),
+      ),
   );
 }
 
