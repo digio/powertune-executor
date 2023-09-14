@@ -112,7 +112,9 @@ export async function processTuneConfig(context) {
   const payloadIsArray = Array.isArray(config.payload);
 
   if (payloadIsArray) {
-    config.payload.forEach((payloadItem) => findIncludeKeys(payloadItem, configFileDir));
+    await Promise.all(
+      config.payload.map((payloadItem) => findIncludeKeys(payloadItem, configFileDir)),
+    );
   } else {
     await findIncludeKeys(config, configFileDir);
   }
@@ -158,8 +160,9 @@ async function includeContent(payload, configFileDir, key, pathValue) {
     // Look for the corresponding $$args<n> key
     const keyNum = key.match(/\d+/);
     const args = payload.payload['$$args' + keyNum];
+    const fnPayload = await includeData(...args); // Support async functions
 
-    payload.payload = { ...payload.payload, ...includeData(...args) };
+    payload.payload = { ...payload.payload, ...fnPayload };
 
     // Delete the $$args<n>... key
     delete payload.payload['$$args' + keyNum];
