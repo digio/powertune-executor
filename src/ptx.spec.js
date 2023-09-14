@@ -48,6 +48,34 @@ describe('PowerTune Executor', () => {
         body: 'Hello World ESM!',
       });
     });
+
+    it('should process the payload property when it is an object and includes an ESM function that is asynchronous', async () => {
+      const context = {
+        configFile: getFixtureConfigPath('payloadAsyncESMFunction.json'),
+      };
+
+      const { tuneConfig } = await processTuneConfig(context);
+      expect(tuneConfig.payload).toEqual({
+        isBase64Encoded: false,
+        body: 'Hello World Async ESM!',
+      });
+    });
+
+    it('should process the payload property when it is an array and includes an ESM function that is asynchronous', async () => {
+      const context = {
+        configFile: getFixtureConfigPath('payloadArrayAsyncESMFunction.json'),
+      };
+
+      const { tuneConfig } = await processTuneConfig(context);
+      expect(tuneConfig.payload[0].payload).toEqual({
+        isBase64Encoded: false,
+        body: 'Hello World Async ESM 1!',
+      });
+      expect(tuneConfig.payload[1].payload).toEqual({
+        isBase64Encoded: false,
+        body: 'Bye World Async ESM 2!',
+      });
+    });
   });
 });
 
